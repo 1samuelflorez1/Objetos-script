@@ -1,5 +1,10 @@
 
 function Carro(marca, modelo, anio, color, cantidad) {
+
+    if (marca.length > 20 || marca == ""){
+        alert("La marca de ede ser real y menos de 20 letras")
+    }
+
     this.marca = marca
     this.modelo = modelo
     this.anio = anio
@@ -172,5 +177,8 @@ document.getElementById("searchUltimos").addEventListener(
         ultimosDeLaLista(listaCarros)
     }
 )
+if (listaCarros[0] instanceof Carro){
+    
+}
 
 renderCarList(listaCarros);
