@@ -4,7 +4,21 @@ function Carro(marca, modelo, anio, color, cantidad) {
     this.modelo = modelo
     this.anio = anio
     this.color = color
-    this.cantidad = cantidad
+    this.cantidad = cantidad || 1
+
+    this.getInfo = function(){
+        return `${this.marca} ${this.modelo} (${this.anio}) - Color: ${this.color}`
+    }
+
+    this.aumentarCantidad = function(){
+        this.cantidad += 1
+    }
+
+    this.disminuirCantidad = function(){
+        if (this.cantidad > 1){
+            this.cantidad -= 1
+        }
+    }
 
     this.vender = function(){
         this.cantidad -= 1
@@ -20,15 +34,15 @@ let listaCarros = [];
 const form = document.getElementById('carForm');
 const carsContainer = document.getElementById('carsContainer');
 
-function renderCarList() {
+function renderCarList(listaArendizar) {
     carsContainer.innerHTML = '';
     
-    if (listaCarros.length === 0) {
+    if (listaArendizar.length === 0) {
         carsContainer.innerHTML = '<p class="no-cars">No hay carros en la lista</p>';
         return;
     }
     
-    listaCarros.forEach((carro, index) => {
+    listaArendizar.forEach((carro, index) => {
         const carCard = document.createElement('div');
         carCard.className = 'car-card';
         
@@ -64,16 +78,16 @@ function renderCarList() {
     document.querySelectorAll('.increase-btn').forEach(button => {
         button.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index'))
-            listaCarros[index].comprar()
-            renderCarList()
+            listaCarros[index].aumentarCantidad()
+            renderCarList(listaCarros)
         })
     })
 
     document.querySelectorAll('.decrease-btn').forEach(button => {
         button.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index'))
-            listaCarros[index].vender()
-            renderCarList()
+            listaCarros[index].disminuirCantidad()
+            renderCarList(listaCarros)
         })
     })
     
@@ -92,7 +106,7 @@ function agregarCarro(event) {
     
     listaCarros.push(nuevoCarro);
 
-    renderCarList();
+    renderCarList(listaCarros);
     
     form.reset();
     document.getElementById('cantidad').value = 1;
@@ -100,9 +114,63 @@ function agregarCarro(event) {
 
 function eliminarCarro(index) {
     listaCarros.splice(index, 1);
-    renderCarList();
+    renderCarList(listaCarros);
 }
 
 form.addEventListener('submit', agregarCarro);
 
-renderCarList();
+listaCarros.push(new Carro('Toyota', 'corola', 2022, 'red'))
+listaCarros.push(new Carro('Honda', 'Civic', 2022, 'black'))
+listaCarros.push(new Carro('Chevrolet', 'Cruze', 2022, 'white'))
+
+
+
+
+function buscarCarro(){
+    busqueda = document.getElementById('searchInput').value
+
+    if (busqueda == ''){
+        renderCarList(listaCarros)
+        return
+    }
+
+    
+    resultadoBuscado = listaCarros.filter(carro => carro.marca == busqueda
+    )
+    
+    
+    renderCarList(resultadoBuscado)
+}
+
+function ultimosDeLaLista(){
+    renderCarList(listaCarros.slice(-1))
+
+}
+
+document.getElementById('searchButton').addEventListener(
+    'click', function(){
+        buscarCarro()
+    }
+)
+
+document.getElementById('searchInput').addEventListener(
+    'keypress', function(event){
+        if (event.key === 'Enter'){
+            buscarCarro()
+        }
+    }
+)
+
+document.getElementById("searchAll").addEventListener(
+    'click', function(){
+        renderCarList(listaCarros)
+    }
+)
+
+document.getElementById("searchUltimos").addEventListener(
+    'click', function(){
+        ultimosDeLaLista(listaCarros)
+    }
+)
+
+renderCarList(listaCarros);
